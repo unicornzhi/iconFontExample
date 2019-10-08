@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>IconFontExample</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/font-awesome-4.7.0/css/font-awesome.css">
+  <style>
+body{
+      color: #696969;
+  }
+i{
+    margin: 13px 19px 0px 22px;
+  }
+#getDataBtn{
+    float: left;
+  }
+#demo{
+    width: 479px;
+    height: 100px;
+    padding: 2px 18px;
+    margin-left: 425px;
+    cursor: text;
+  }
+.search{
+    width: 490px;
+    height: 58px;
+    padding: 6px 9px;
+    margin-left: 425px;
+  }
+#content{
+    width: 400px;
+    height: 50px;
+    float: left;
+  }
+#btn{
+    width: 85px;
+    height: 56px;
+    margin: 0px 0px;
+    float: left;
+  }
+.s {
+	color: rgb(212, 73, 80);
+}
+.na {
+	color: rgb(79, 159, 207);
+}
+.nt {
+	color: rgb(153, 153, 153);
+}
+.highlight{
+float: left;
+}
+html {
+  font: 12px microsoft yahei;
+}
+.iconFont{
+  margin: 10px 19px;
+}
+
+.iconFont ul {
+  text-align: center;
+  list-style: none;
+}
+.iconFont ul li{
+  width: 198px;
+  display: inline-block;
+  background-color: rgba(0,0,0,.05);
+  border-radius: 3px;
+  padding: 29px 0 30px 0;
+  margin-right: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.iconFont ul li:hover{
+  color: #3c74e4;
+  background-color: rgba(0,0,0,.09);
+}
+.iconFont ul li:hover span{
+  color: #3c74e4;
+  opacity: 1;
+}
+#delete{
+   font-size: 17px;
+    float: left;
+    margin-left: -19px;
+    margin-top: 17px;
+    display: none;
+}
+#delete:hover{
+  color: #3c74e4;
+  cursor: pointer;
+}
+.header{
+  color: #333;
+  text-align: center;
+  padding: 26px 0 60px 0;
+  min-height: 153px;
+  font-size: 14px;
+}
+.header h1{
+   font-size: 42px;
+   padding: 26px 0 10px 0;
+}
+a{
+  color: #333;
+  text-decoration: underline;
+}
+a:hover{
+  color: #0949d1;
+}
+
+.iconFont ul li.font span{
+  font-size: 12px;
+}
+.iconFont ul li.font{
+  font-size: 26px;
+}  
+  </style>
+</head>
+
+<body>
+  <div class="header">
+     <h1>FontAwesome</h1>
+     <a href="/downloadF">下载CSS</a>
+  </div>
+  <div id="demo">
+    <h2>示例</h2>
+    <i class="fa fa-camera-retro"></i>
+    <div class="highlight">
+      <pre><code class="html"><span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">"fa fa-camera-retro"</span><span class="nt">&gt;&lt;/i&gt;</span> fa-camera-retro
+      </code></pre>
+    </div>
+  </div>
+
+  <div class="search">
+    <input type="text" id="content" placeholder="请输入关键字">
+    <!-- <span id="delete" onclick="Delete()"> X </span> -->
+    <button id="btn" onclick="searchByKeywords()">搜索</button>
+  </div>
+  <div class="iconFont">
+    <ul id="icon-list"></ul>
+  </div>
+
+</body>
+<script>
+  window.onload = () => {
+    let inputNode = document.getElementById("content");
+    if ("oninput" in inputNode) {
+      inputNode.addEventListener("input", searchByKeywords, false);
+    }
+
+    document.onkeydown = (event => {
+      if (event.keyCode == 13) {
+        searchByKeywords();
+      }
+    })
+    if(document.styleSheets[0].cssRules){
+      getFontCss();
+    }
+
+  }
+  // function Delete() {
+  //   document.getElementById("content").value = "";
+  //   document.getElementById("delete").style.display = "none";
+  // }
+
+  function searchByKeywords() {
+    let content = document.getElementById("content").value.trim();
+    // console.log(content);
+    let array = new Array();
+    let targetNode = document.getElementsByClassName("iconFont");
+    let length = targetNode[0].children[0].childNodes.length;
+    let node = targetNode[0].children[0];
+    for (let i = 0; i < length; i++) {
+      array[i] = node.children[i].innerText;
+    }
+    if (content != "") {
+      document.getElementById("delete").style.display = "inline-block";
+      content = content.toLowerCase();
+      array.forEach((v, i) => {
+        let flag = v.search(content);
+        if (flag == -1) {
+          node.children[i].style.display = " none ";
+        } else {
+          node.children[i].style.display = "inline-block";
+        }
+      })
+    } else {
+      document.getElementById("delete").style.display = "none";
+      array.forEach((v, i) => {
+        node.children[i].style.display = "inline-block";
+      })
+    }
+  }
+  function trim() {
+    return this.replace(/(^\s*)|(\s*$)/g, "");
+  }
+
+  function getFontCss() {
+
+    let fontCss = document.styleSheets[0].cssRules;
+    let allSelector = "";
+
+    let regx = /(?<=\.fa-)[^\.]+?(?=::before)/g;
+    Object.values(fontCss).forEach(element => {
+      allSelector += element.selectorText;
+    });
+    let resultEE = allSelector.match(regx);
+    // console.log("allCss", resultEE)
+    //  console.log("aLLFontClass",fontClass);
+    let nodeList = "";
+    resultEE.forEach(v => {
+      let node = `<li class="font"><i class="fa fa-${v}"><span>${v}</span></i></li>`;
+      nodeList += node;
+      // console.log("ul",parentNode);
+    })
+    // console.log("nodeList", nodeList)
+    document.getElementById("icon-list").innerHTML = nodeList;
+  }
+</script>
+
+</html>
